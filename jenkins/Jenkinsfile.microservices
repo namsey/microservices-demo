@@ -19,7 +19,7 @@ node {
   stage('Parallel CI for Microservices') {
     parallel services.collectEntries { service ->
       ["${service}": {
-        node(kubernetesAgent(service)) {
+        node(getAgentFor(service: service)) {
           buildApp(service: service)
           runTests(service: service)
           dockerBuildPush(service: service, imageRepo: "304230205815.dkr.ecr.us-east-1.amazonaws.com/ecommerce/microservices")
