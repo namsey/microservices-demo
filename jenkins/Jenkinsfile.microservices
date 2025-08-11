@@ -1,0 +1,34 @@
+@Library('jenkins-shared-lib') _
+
+def services = [
+  'adservice',
+  'cartservice',
+  'checkoutservice',
+  'currencyservice',
+  'emailservice',
+  'frontend',
+  'loadgenerator',
+  'paymentservice',
+  'productcatalogservice',
+  'recommendationservice',
+  'shippingservice',
+  'shoppingassistantservice'
+]
+
+pipeline {
+  agent none
+
+  stages {
+    stage('CI Pipeline - Parallel Builds') {
+      parallel services.collectEntries { service ->
+        ["${service}": {
+          node(kubernetesAgent(service)) {
+            buildApp(service: service)
+            runTests(service: service)
+            dockerBuildPush(service: service, imageRepo: "123456789012.dkr.ecr.us-east-1.amazonaws.com")
+          }
+        }]
+      }
+    }
+  }
+}
