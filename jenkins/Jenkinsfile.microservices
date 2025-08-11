@@ -15,20 +15,16 @@ def services = [
   'shoppingassistantservice'
 ]
 
-pipeline {
-  agent none
-
-  stages {
-    stage('CI Pipeline - Parallel Builds') {
-      parallel services.collectEntries { service ->
-        ["${service}": {
-          node(kubernetesAgent(service)) {
-            buildApp(service: service)
-            runTests(service: service)
-            dockerBuildPush(service: service, imageRepo: "304230205815.dkr.ecr.us-east-1.amazonaws.com/ecommerce/microservices")
-          }
-        }]
-      }
+node {
+  stage('Parallel CI for Microservices') {
+    parallel services.collectEntries { service ->
+      ["${service}": {
+        node(kubernetesAgent(service)) {
+          buildApp(service: service)
+          runTests(service: service)
+          dockerBuildPush(service: service, imageRepo: "304230205815.dkr.ecr.us-east-1.amazonaws.com/ecommerce/microservices")
+        }
+      }]
     }
   }
 }
