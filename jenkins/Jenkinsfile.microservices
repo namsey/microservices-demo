@@ -25,7 +25,7 @@ pipeline {
           node(kubernetesAgent(service)) {
             buildApp(service: service)
             runTests(service: service)
-            dockerBuildPush(service: service, imageRepo: "123456789012.dkr.ecr.us-east-1.amazonaws.com")
+            dockerBuildPush(service: service, imageRepo: "304230205815.dkr.ecr.us-east-1.amazonaws.com/ecommerce/microservices")
           }
         }]
       }
