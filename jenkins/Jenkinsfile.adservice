@@ -5,7 +5,7 @@ def service = 'adservice'
 pipeline {
   agent {
     kubernetes {
-      label getAgentFor(service: service)
+      label 'java-builder'
       defaultContainer 'jnlp'
     }
   }
