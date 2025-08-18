@@ -1,3 +1,5 @@
+@Library('jenkins-shared-lib') _
+echo "✅ Shared library loaded successfully"
 pipeline {
   agent {
     kubernetes {
