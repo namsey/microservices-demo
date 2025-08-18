@@ -1,0 +1,20 @@
+@Library('jenkins-shared-lib') _
+
+def service = 'adservice'
+
+pipeline {
+  agent {
+    kubernetes {
+      label getAgentFor(service: service)
+      defaultContainer 'jnlp'
+    }
+  }
+
+  stages {
+    stage('Build') {
+      steps {
+        buildApp(service: service)
+      }
+    }
+  }
+}
