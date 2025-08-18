@@ -2,7 +2,10 @@ def call(Map args = [:]) {
   def service = args.service
 
   if (fileExists("build.gradle")) {
-    sh './gradlew build -x test'
+    sh '''
+      chmod +x ./gradlew
+      ./gradlew build -x test
+    '''
   } else if (fileExists("package.json")) {
     sh 'npm ci && npm run build'
   } else if (fileExists("go.mod")) {
