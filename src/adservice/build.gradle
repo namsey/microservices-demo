@@ -17,7 +17,7 @@ version = "0.1.0-SNAPSHOT"
 // Use Java 19 for compilation (and tests) via Gradle Toolchains
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(19)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 

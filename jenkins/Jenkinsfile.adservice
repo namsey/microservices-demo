@@ -1,6 +1,9 @@
 @Library('jenkins-shared-lib') _
-echo "✅ Shared library loaded successfully"
+
 pipeline {
+  environment {
+  ORG_GRADLE_JAVA_INSTALLATIONS_AUTO_DOWNLOAD = 'true'
+}
   agent {
     kubernetes {
       label 'java-builder'
