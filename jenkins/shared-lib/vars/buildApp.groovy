@@ -4,6 +4,7 @@ def call(Map args = [:]) {
   if (fileExists("build.gradle")) {
     sh '''
       chmod +x ./gradlew
+      ./gradlew -x verifyGoogleJavaFormat build
       ./gradlew build -x test
     '''
   } else if (fileExists("package.json")) {
