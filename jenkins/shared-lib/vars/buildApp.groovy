@@ -5,7 +5,7 @@ def call(Map args = [:]) {
     sh '''
       chmod +x ./gradlew
       ./gradlew -x verifyGoogleJavaFormat build
-      ./gradlew build -x test
+      ./gradlew verifyGoogleJavaFormat --info --stacktrace
     '''
   } else if (fileExists("package.json")) {
     sh 'npm ci && npm run build'
