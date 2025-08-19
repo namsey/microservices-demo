@@ -14,6 +14,18 @@ description = 'Ad Service'
 group = "adservice"
 version = "0.1.0-SNAPSHOT"
 
+// Use Java 19 for compilation (and tests) via Gradle Toolchains
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(19)
+  }
+}
+
+// Guard in case a plugin forces a different release
+tasks.withType(JavaCompile).configureEach {
+  options.release = 19
+}
+
 def grpcVersion = "1.73.0"
 def jacksonCoreVersion = "2.19.1"
 def jacksonDatabindVersion = "2.19.1"
