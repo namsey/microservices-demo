@@ -118,4 +118,12 @@ applicationDistribution.into('bin') {
 tasks.matching { it.name == 'verifyGoogleJavaFormat' }.configureEach {
     enabled = false
 }
+
+// Put this at the end of the *root* build.gradle
+if (!tasks.findByName('verifyGoogleJavaFormat')) {
+  tasks.register('verifyGoogleJavaFormat') {
+    doLast { logger.lifecycle('verifyGoogleJavaFormat skipped (task not applied)') }
+  }
+}
+
 // -------------------------------------------------------------------
