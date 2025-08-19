@@ -4,6 +4,16 @@ plugins {
     id 'application'
 }
 
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21) // use what's present
+  }
+}
+
+tasks.withType(JavaCompile).configureEach {
+  options.release = 19  // bytecode level
+}
+
 repositories {
     mavenCentral()
     mavenLocal()
