@@ -1,0 +1,23 @@
+apiVersion: skaffold/v3
+kind: Config
+metadata:
+  name: adservice
+
+build:
+  artifacts:
+    - image: adservice
+      context: src/adservice
+      docker:
+        dockerfile: Dockerfile
+  tagPolicy:
+    gitCommit: {}
+
+profiles:
+  # Build inside the cluster with Kaniko (no Docker daemon needed)
+  - name: ecr-kaniko
+    build:
+      cluster:
+        namespace: default
+        serviceAccountName: ecr-image-builder   # <-- K8s SA with IRSA to push to ECR
+        # If you must force one architecture, uncomment:
+        # platforms: ["linux/amd64"]
