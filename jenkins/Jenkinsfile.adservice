@@ -8,7 +8,7 @@ pipeline {
 }
   agent {
     kubernetes {
-      label 'java-builder'
+      label 'jenkins-jenkins-agent'
       defaultContainer 'jnlp'
     }
   }
