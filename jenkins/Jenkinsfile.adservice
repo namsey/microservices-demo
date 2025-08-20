@@ -26,8 +26,10 @@ pipeline {
         dir('src/adservice') {
           withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-s3-creds']]) {
             sh '''
-              echo "🔧 Installing unzip and AWS CLI..."
+              echo "🔧 Installing unzip ..."
               apt-get update && apt-get install -y unzip curl bash
+              echo "✅ Checking if unzip is installed..."
+              unzip -v
               echo "🔧 Installing AWS CLI..."
               curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
               unzip awscliv2.zip
