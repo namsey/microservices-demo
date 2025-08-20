@@ -3,8 +3,6 @@
 pipeline {
   environment {
   ORG_GRADLE_JAVA_INSTALLATIONS_AUTO_DOWNLOAD = 'true'
-  S3_BUCKET = 'jenkins-build-artifacts-2025'
-  AWS_REGION = 'us-east-1'
 }
   agent {
     kubernetes {
@@ -14,29 +12,6 @@ pipeline {
   }
 
   stages {
-    stage('Build') {
-      steps {
-        dir("src/adservice") {
-          buildApp(service: '.')
-        }
-      }
-    }
-    stage('Upload to S3') {
-      steps {
-        dir('src/adservice') {
-          withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-s3-creds']]) {
-            sh '''
-              aws --version
-              echo "📦 Listing build/libs contents before upload:"
-              ls -lh build/libs/
-              aws s3 cp build/libs/ s3://$S3_BUCKET/adservice/ --recursive --region $AWS_REGION
-              echo "✅ Verifying upload:"
-              aws s3 ls s3://$S3_BUCKET/adservice/ --region $AWS_REGION
-            '''
-          }
-        }
-      }
-    }
     stage('Build & Push adservice (Kaniko -> ECR)') {
   agent {
     kubernetes {
@@ -46,12 +21,12 @@ kind: Pod
 spec:
   containers:
   - name: awscli
-    image: amazon/aws-cli:2
-    command: ['cat']
+    image: public.ecr.aws/aws-cli/aws-cli:2        # <-- FIXED
+    command: ['cat']                               # keep container alive
     tty: true
   - name: kaniko
-    image: gcr.io/kaniko-project/executor:latest
-    args: ['--ignore-path=/dev/null']
+    image: gcr.io/kaniko-project/executor:v1.23.2  # pin a recent version
+    command: ['cat']                               # <-- FIXED (no args)
     tty: true
     volumeMounts:
     - name: kaniko-cache
@@ -66,13 +41,14 @@ spec:
     ECR_REPO   = 'adservice'
     BUILD_CTX  = 'src/adservice'
     DOCKERFILE = 'src/adservice/Dockerfile'
+    // AWS_REGION is already defined at top-level in your pipeline
   }
   steps {
     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-s3-creds']]) {
       script {
         def ciTag = sh(script: "git rev-parse --short=7 HEAD || echo no-git", returnStdout: true).trim() + "-${env.BUILD_NUMBER}"
 
-        // 1) Discover registry and ensure repo exists
+        // 1) Discover registry + ensure repo exists
         container('awscli') {
           sh '''
             set -euo pipefail
@@ -87,8 +63,8 @@ spec:
           '''
         }
         def registry = sh(script: "cat .ecr_registry", returnStdout: true).trim()
-        def img1 = "${registry}/${env.ECR_REPO}:${ciTag}"
-        def img2 = "${registry}/${env.ECR_REPO}:latest"
+        def imgCi  = "${registry}/${env.ECR_REPO}:${ciTag}"
+        def imgLat = "${registry}/${env.ECR_REPO}:latest"
 
         // 2) Build & push with Kaniko
         container('kaniko') {
@@ -97,18 +73,18 @@ spec:
             /kaniko/executor \
               --context="${WORKSPACE}/${BUILD_CTX}" \
               --dockerfile="${WORKSPACE}/${DOCKERFILE}" \
-              --destination="${img1}" \
-              --destination="${img2}" \
+              --destination="${imgCi}" \
+              --destination="${imgLat}" \
               --cache=true --cache-ttl=168h
           """
         }
-        echo "✅ Pushed: ${img1}"
-        echo "✅ Pushed: ${img2}"
-        writeFile file: 'adservice-image.txt', text: img1
+
+        echo "✅ Pushed: ${imgCi}"
+        echo "✅ Pushed: ${imgLat}"
+        writeFile file: 'adservice-image.txt', text: imgCi
       }
     }
   }
 }
-
   }
 }
