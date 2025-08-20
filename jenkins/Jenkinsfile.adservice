@@ -32,7 +32,11 @@ pipeline {
               unzip awscliv2.zip
               ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
               aws --version
+              echo "📦 Listing build/libs contents before upload:"
+              ls -lh build/libs/
               aws s3 cp build/libs/ s3://$S3_BUCKET/adservice/ --recursive --region $AWS_REGION
+              echo "✅ Verifying upload:"
+              aws s3 ls s3://$S3_BUCKET/adservice/ --region $AWS_REGION
             '''
           }
         }
