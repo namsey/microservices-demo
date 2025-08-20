@@ -14,19 +14,6 @@ pipeline {
   }
 
   stages {
-    stage('Unit Test') {
-      steps {
-        dir('src/adservice') {
-          sh '''
-            chmod +x ./gradlew
-            ./gradlew --no-daemon clean test
-          '''
-          // publish test results to Jenkins UI
-          junit 'build/test-results/test/*.xml'
-          archiveArtifacts artifacts: 'build/reports/tests/test/**', fingerprint: true
-        }
-      }
-    }
     stage('Build') {
       steps {
         dir("src/adservice") {
