@@ -6,6 +6,10 @@ pipeline {
 }
   agent {
     kubernetes {
+      AWS_REGION = 'us-east-1'
+      ECR_REPO   = 'adservice'
+      BUILD_CTX  = 'src/adservice'
+      DOCKERFILE = 'src/adservice/Dockerfile'
       label 'jenkins-jenkins-agent'
       defaultContainer 'jnlp'
     }
@@ -71,6 +75,7 @@ spec:
           sh """
             set -euo pipefail
             /kaniko/executor \
+              --verbosity=debug \
               --context="${WORKSPACE}/${BUILD_CTX}" \
               --dockerfile="${WORKSPACE}/${DOCKERFILE}" \
               --destination="${imgCi}" \
