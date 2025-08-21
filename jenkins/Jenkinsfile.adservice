@@ -2,14 +2,14 @@
 
 pipeline {
   environment {
-  ORG_GRADLE_JAVA_INSTALLATIONS_AUTO_DOWNLOAD = 'true'
+    AWS_REGION = 'us-east-1'
+    ECR_REPO   = 'adservice'
+    BUILD_CTX  = 'src/adservice' 
+    DOCKERFILE = 'src/adservice/Dockerfile' 
+    ORG_GRADLE_JAVA_INSTALLATIONS_AUTO_DOWNLOAD = 'true'
 }
   agent {
     kubernetes {
-      AWS_REGION = 'us-east-1'
-      ECR_REPO   = 'adservice'
-      BUILD_CTX  = 'src/adservice'
-      DOCKERFILE = 'src/adservice/Dockerfile'
       label 'jenkins-jenkins-agent'
       defaultContainer 'jnlp'
     }
