@@ -25,12 +25,12 @@ kind: Pod
 spec:
   containers:
   - name: awscli
-    image: public.ecr.aws/aws-cli/aws-cli:2        # <-- FIXED
-    command: ['cat']                               # keep container alive
+    image: public.ecr.aws/aws-cli/aws-cli:latest      # <-- FIXED
+    command: ["/bin/sh", "-c", "sleep infinity"]                               # keep container alive
     tty: true
   - name: kaniko
     image: gcr.io/kaniko-project/executor:v1.23.2  # pin a recent version
-    command: ['cat']                               # <-- FIXED (no args)
+    command: ["/bin/sh", "-c", "sleep infinity"]                               # <-- FIXED (no args)
     tty: true
     volumeMounts:
     - name: kaniko-cache
