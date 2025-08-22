@@ -26,11 +26,11 @@ kind: Pod
 spec:
   containers:
   - name: awscli
-    image: public.ecr.aws/$ALIAS/tools/aws-cli:latest      # <-- FIXED
+    image: public.ecr.aws/${env.PUBLIC_ECR_ALIAS}/tools/aws-cli:latest      # <-- FIXED
     command: ["/bin/sh", "-c", "sleep infinity"]                               # keep container alive
     tty: true
   - name: kaniko
-    image: public.ecr.aws/$ALIAS/tools/kaniko-executor:latest  # pin a recent version
+    image: public.ecr.aws/${env.PUBLIC_ECR_ALIAS}/tools/kaniko-executor:latest  # pin a recent version
     command: ["/bin/sh", "-c", "sleep infinity"]                               # <-- FIXED (no args)
     tty: true
     volumeMounts:
