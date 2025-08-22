@@ -2,6 +2,7 @@
 
 pipeline {
   environment {
+    PUBLIC_ECR_ALIAS  = 'p0e7e3j3'
     AWS_REGION = 'us-east-1'
     ECR_REPO   = 'adservice'
     BUILD_CTX  = 'src/adservice' 
