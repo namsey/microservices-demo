@@ -27,11 +27,21 @@ spec:
   containers:
   - name: awscli
     image: public.ecr.aws/${env.PUBLIC_ECR_ALIAS}/tools/aws-cli:latest      
-    command: ["/bin/sh", "-c", "sleep infinity"]                               
+    imagePullPolicy: IfNotPresent
+    command:
+      - /bin/sh
+    args:
+      - -c
+      - 'sleep infinity'
     tty: true
   - name: kaniko
     image: public.ecr.aws/${env.PUBLIC_ECR_ALIAS}/tools/kaniko-executor:v1.23.2-debug  
-    command: ["/busybox/sh", "-c", "sleep infinity"
+    imagePullPolicy: IfNotPresent
+    command:
+      - /bin/sh
+    args:
+      - -c
+      - 'sleep infinity'
     tty: true
     volumeMounts:
     - name: kaniko-cache
